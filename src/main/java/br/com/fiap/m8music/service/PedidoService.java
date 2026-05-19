@@ -6,6 +6,8 @@ import br.com.fiap.m8music.domain.Pedido;
 import br.com.fiap.m8music.exception.BusinessException;
 import br.com.fiap.m8music.getaway.dto.pedido.PedidoDTO;
 import br.com.fiap.m8music.getaway.repository.PedidoRepository;
+import br.com.fiap.m8music.messaging.PedidoProducer;
+import br.com.fiap.m8music.messaging.dto.PedidoEventDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class PedidoService {
     private final PedidoRepository repo;
     private final ClienteService clienteService;
     private final MusicaService musicaService;
+    private final PedidoProducer pedidoProducer;
 
     private PedidoDTO toDTO(Pedido p) {
         return new PedidoDTO(p.getId(), p.getCliente().getId(), p.getMusica().getId());
@@ -34,7 +37,9 @@ public class PedidoService {
     public PedidoDTO create(PedidoDTO dto) {
         Pedido p = new Pedido();
         apply(p, dto);
-        return toDTO(repo.save(p));
+        PedidoDTO saved = toDTO(repo.save(p));
+        pedidoProducer.publicar(new PedidoEventDTO(saved.id(), saved.clienteId(), saved.musicaId()));
+        return saved;
     }
 
     public List<PedidoDTO> list() {
