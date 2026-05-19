@@ -60,6 +60,10 @@ api:
 
 secret: oi
 
+spotify:
+  client-id: ${SPOTIFY_CLIENT_ID:f90815d9e9e64c16accca3e6dcddf217}
+  client-secret: ${SPOTIFY_CLIENT_SECRET:1fefb820481d44719190bb471464cbab}
+
 management:
   endpoints:
     web:
