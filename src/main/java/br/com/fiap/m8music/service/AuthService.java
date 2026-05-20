@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,5 +65,9 @@ public class AuthService implements UserDetailsService {
         var token = tokenService.generateGuestToken(savedClient);
 
         return LoginResponseDTO.builder().token(token).build();
+    }
+
+    public String getToken(Authentication authentication) {
+        return tokenService.generateToken(authentication);
     }
 }
